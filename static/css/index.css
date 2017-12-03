@@ -1,0 +1,29 @@
+body {
+    padding: 10px;
+}
+
+footer {
+    margin-top: 50px;
+    width: 100%;
+}
+
+.padding-15 {
+    padding-left: 15px;
+}
+
+.margin-15 {
+    margin-left: 15px;
+}
+
+.right {
+    float: right;
+}
+
+#dbFields {
+    padding-left: 20px;
+}
+
+#table-name {
+    padding-left: 20px;
+    font-weight: bold;
+}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block body %}
+    <h2>Insert</h2>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header"><h4>Insert a Player:</h4></div>
+                <div class="card-body">
+                    <form id="playerForm" action="/insert_player" method="post">
+                        <div class="form-group col-md-10">
+                            <label for="name"><strong>Name</strong></label>
+                            <input type="text" class="form-control margin-15" id="name" name="name"
+                                   aria-describedby="nameHelp"
+                                   placeholder="Enter Name">
+                            <small id="nameHelp" class="form-text text-muted margin-15">Name must be 50 characters or
+                                less.
+                            </small>
+                        </div>
+                        <div class="form-group margin-15">
+                            <label for="bday"><strong>Date of Birth</strong></label>
+                            <div class="row padding-15" id="bday">
+                                <div class="col col-md-2">
+                                    Day
+                                </div>
+                                <div class="col col-md-2">
+                                    Month
+                                </div>
+                                <div class="col col-md-4">
+                                    Year
+                                </div>
+                            </div>
+                            <div class="row padding-15">
+                                <div class="col col-md-2">
+                                    <input type="number" class="form-control" min="1" max="31" name="day">
+                                </div>
+                                <div class="col col-md-2">
+                                    <input type="number" class="form-control" min="1" max="12" name="month">
+                                </div>
+                                <div class="col col-md-4">
+                                    <input type="number" class="form-control" min="1851" max="2016" name="year">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label for="playerStatus"><strong>Status</strong></label>
+                            <select id="playerStatus" class="form-control margin-15" name="status">
+                                <option value="Active" selected>Active</option>
+                                <option value="Retired">Retired</option>
+                                <option value="Unsigned free agent">Unsigned Free Agent</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary right col-md-2">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            {% with errors = get_flashed_messages(category_filter=["error"]) %}
+                {% if errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <h4 class="alert-heading">
+                            Error(s) occurred!
+                        </h4>
+                        <div>
+                            {% for msg in errors %}
+                                {% for key in msg %}
+                                    {{ key }}:
+                                    <ul>
+                                        {% for val in msg[key] %}
+                                            <li>{{ val }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    <hr>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{% endblock %}

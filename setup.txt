@@ -1,0 +1,12 @@
+
+First time:
+
+mkvirtualenv 434project6
+pip install -r requirements.txt
+
+-------------------------------
+
+Normal:
+
+workon 434project6
+pip install -r requirements.txt
