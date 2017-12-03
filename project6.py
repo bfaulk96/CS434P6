@@ -5,7 +5,6 @@ from string import digits
 
 from wtforms import Form, StringField, IntegerField, validators
 
-
 app = Flask(__name__)
 
 app.secret_key = 'my unobvious secret key'
@@ -31,7 +30,21 @@ def index():
 @app.route('/update')
 def update():
     activePage = 'update'
-    return render_template('update.html', activePage=activePage)
+    result = cursor.execute("SELECT ID, name, currentStatus, year, rushingYards, rushingTDs, fumbles "
+                            "FROM Player, Rushing "
+                            "WHERE ID = playerID "
+                            "LIMIT 2000;")
+    data = cursor.fetchall()
+    rows = []
+    cols = []
+
+    for row in data:
+        for col in row:
+            cols.append(col)
+        rows.append(cols)
+        cols = []
+
+    return render_template('update.html', activePage=activePage, data=rows)
 
 
 @app.route('/delete')
@@ -59,15 +72,16 @@ def insert_player():
         playerID = name.strip(" ").lower() + '/' + (''.join(choice(digits) for i in range(7)))
 
         try:
-            cursor.execute(
+            result = cursor.execute(
                 "INSERT INTO Player(name, DOB, currentStatus, ID) "
                 "VALUES ('{}','{}','{}','{}')".format(name, dob, status, playerID))
             conn.commit()
-            flash("Player was successfully added to the database.", 'success')
+            flash('Player was successfully added to the database. {} row affected.'.format(result), 'success')
             return redirect(url_for('index'))
         except Exception as e:
-            p
-            flash({'Player was not successfully added to database. The following exception occured':[e]},
+            msg = {'Player was not successfully added to database. The following exception occured': [str(e)]}
+            print(msg)
+            flash(msg,
                   'error')
             return redirect(url_for('index'))
     print(form.errors)

@@ -10,3 +10,15 @@ Normal:
 
 workon 434project6
 pip install -r requirements.txt
+
+-------------------------------
+
+To run:
+
+python3 project6.py
+(or just 'python' if you only have 3 installed)
+
+----- OR ----- (if you would like live reloading)
+
+FLASK_APP=project6.py FLASK_DEBUG=1 python3 -m flask run
+(or just 'python' if you only have 3 installed)
