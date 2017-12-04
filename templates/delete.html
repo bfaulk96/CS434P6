@@ -1,4 +1,106 @@
 {% extends "base.html" %}
 {% block body %}
-<h2>Delete</h2>
+    <h2>Delete</h2>
+    <h5 id="nameHelp" class="form-text text-muted">
+        Deleting Players from this table will delete all other stats associated with the player.</h5>
+    <div class="row">
+        <div class="col col-7">
+            <table id="Player" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+                <caption>Player Rushing Stats</caption>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Current Status</th>
+                    <th>Date of Birth</th>
+                    <th>Delete</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Current Status</th>
+                    <th>Date of Birth</th>
+                    <th>Delete</th>
+                </tr>
+                </tfoot>
+                <tbody>
+                {% for row in data %}
+                    <tr>
+                        {% for field in row %}
+                            <td>{{ field }}</td>
+                        {% endfor %}
+                        <td class="text-center">
+{#                            <form id='deletePlayerForm' action='/delete_player' method='post'>#}
+{#                                <input type='hidden' id='id' name='id' value='{{ row[0] }}'>#}
+                                <a tabindex="0" class="btn btn-danger" role="button" data-toggle="popover"
+                                   data-trigger="focus" data-placement="top"
+                                    data-html="true"  title="<div class='text-center'>Are you sure you would like to delete this player?</div>"
+                                   data-content="<div class='text-center'>
+                                   <div class='row'>
+                                   <div class='col'>
+                                   <form id='deletePlayerForm' action='/delete_player' method='post'>
+                                   <input type='hidden' id='id' name='id' value='{{ row[0] }}'>
+                                   <input type='submit' class='btn btn-danger w-100' value='Delete'>
+                                   </form>
+                                   </div>
+                                   <div class='col'>
+                                   <a data-toggle='popover' class='btn btn-secondary w-100' role='button' id='cancel'>Cancel</a>
+                                   </div>
+                                   </div>
+                                   </div>">Delete</a>
+{#                                <input type='submit' class="btn btn-danger" value='Delete'>#}
+{#                            </form>#}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col align-self-center">
+            {% with errors = get_flashed_messages(category_filter=["error"]) %}
+                {% if errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <h4 class="alert-heading">
+                            Error(s) occurred!
+                        </h4>
+                        <div>
+                            {% for msg in errors %}
+                                {% for key in msg %}
+                                    {{ key }}:
+                                    <ul>
+                                        {% for val in msg[key] %}
+                                            <li>{{ val }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    <hr>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endif %}
+            {% endwith %}
+            {% with successes = get_flashed_messages(category_filter=["success"]) %}
+                {% if successes %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <h4 class="alert-heading">
+                            Success!
+                        </h4>
+                        {% for msg in successes %}
+                            <div>
+                                {{ msg }}
+                            </div>
+                        {% endfor %}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
 {% endblock %}

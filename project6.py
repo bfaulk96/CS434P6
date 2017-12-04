@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flaskext.mysql import MySQL
 from random import choice
 from string import digits
+import datetime
 
 from wtforms import Form, StringField, IntegerField, validators
 
@@ -30,7 +31,7 @@ def index():
 @app.route('/update')
 def update():
     activePage = 'update'
-    result = cursor.execute("SELECT ID, name, currentStatus, year, rushingYards, rushingTDs, fumbles "
+    result = cursor.execute("SELECT ID, name, currentStatus, team, year, rushingYards, rushingTDs, fumbles "
                             "FROM Player, Rushing "
                             "WHERE ID = playerID "
                             "LIMIT 2000;")
@@ -50,7 +51,21 @@ def update():
 @app.route('/delete')
 def delete():
     activePage = 'delete'
-    return render_template('delete.html', activePage=activePage)
+    result = cursor.execute("SELECT ID, name, currentStatus, DOB "
+                            "FROM Player "
+                            "LIMIT 2000;")
+    data = cursor.fetchall()
+    rows = []
+    cols = []
+
+    for row in data:
+        for col in row:
+            cols.append(col)
+        rows.append(cols)
+        cols = []
+    # for row in rows:
+    #     row[3] = datetime.datetime.strftime(row[3], '%m, %d, %Y')
+    return render_template('delete.html', activePage=activePage, data=rows)
 
 
 @app.route('/interesting')
@@ -66,6 +81,7 @@ def insert_player():
         name = request.form['name']
         day = request.form['day']
         month = request.form['month']
+        team = request.form['team']
         year = request.form['year']
         status = request.form['status']
         dob = year + '-' + month + '-' + day
@@ -79,7 +95,7 @@ def insert_player():
             flash('Player was successfully added to the database. {} row affected.'.format(result), 'success')
             return redirect(url_for('index'))
         except Exception as e:
-            msg = {'Player was not successfully added to database. The following exception occured': [str(e)]}
+            msg = {'Player was not successfully added to database. The following exception occurred': [str(e)]}
             print(msg)
             flash(msg,
                   'error')
@@ -87,6 +103,58 @@ def insert_player():
     print(form.errors)
     flash(form.errors, 'error')
     return redirect(url_for('index'))
+
+
+@app.route('/update_player', methods=['GET', 'POST'])
+def update_player():
+    form = request.form
+    if form:
+        id = form['id']
+        team = form['team']
+        year = form['year']
+        fumbles = form['fumbles']
+        rushingYards = form['rushingYards']
+        rushingTDs = form['rushingTDs']
+
+        try:
+            result = cursor.execute("UPDATE Rushing SET rushingYards = {}, rushingTDs = {}, fumbles = {} "
+                                    "WHERE (playerID LIKE \"{}\" AND team LIKE \"{}\" AND year = {})"
+                                    .format(rushingYards, rushingTDs, fumbles, id, team, year))
+            conn.commit()
+            flash('Player was successfully updated. {} row affected.'.format(result), 'success')
+            return redirect(url_for('update'))
+        except Exception as e:
+            msg = {'Player was not successfully updated. The following exception occurred': [str(e)]}
+            print(msg)
+            flash(msg,
+                  'error')
+            return redirect(url_for('update'))
+    print(form.errors)
+    flash(form.errors, 'error')
+    return redirect(url_for('update'))
+
+
+@app.route('/delete_player', methods=['GET', 'POST'])
+def delete_player():
+    try:
+        form = request.form
+        id = form['id']
+        cursor.execute("DELETE FROM Rushing WHERE playerID LIKE \"{}\"".format(id))
+        cursor.execute("DELETE FROM Passing WHERE playerID LIKE \"{}\"".format(id))
+        cursor.execute("DELETE FROM Receiving WHERE playerID LIKE \"{}\"".format(id))
+        cursor.execute("DELETE FROM FieldGoalKicking WHERE playerID LIKE \"{}\"".format(id))
+        cursor.execute("DELETE FROM Defensive WHERE playerID LIKE \"{}\"".format(id))
+        cursor.execute("DELETE FROM Stats WHERE playerID LIKE \"{}\"".format(id))
+        cursor.execute("DELETE FROM Player WHERE ID LIKE \"{}\"".format(id))
+        conn.commit()
+        flash('Player was successfully deleted. 7 tables affected.', 'success')
+        return redirect(url_for('delete'))
+    except Exception as e:
+        msg = {'Player was not successfully deleted. The following exception occurred': [str(e)]}
+        print(msg)
+        flash(msg,
+              'error')
+        return redirect(url_for('delete'))
 
 
 class PlayerForm(Form):
