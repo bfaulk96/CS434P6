@@ -104,8 +104,6 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col">
-                                <label for="id"><strong>ID: </strong></label>
-                                <input type="text" class="form-control" id="id1" disabled>
                                 <input type="hidden" name="id" id="id" />
                                 <label for="name"><strong>Name: </strong></label>
                                 <input type="text" class="form-control" id="name1" disabled>
@@ -114,7 +112,7 @@
                                 <input type="text" class="form-control" id="currentStatus1" disabled>
                                 <input type="hidden" name="currentStatus" id="currentStatus" />
                                 <label for="team"><strong>Team: </strong></label>
-                                <input type="number" class="form-control" id="team1" disabled>
+                                <input type="text" class="form-control" id="team1" disabled>
                                 <input type="hidden" name="team" id="team" />
                                 <label for="year"><strong>Year: </strong></label>
                                 <input type="number" class="form-control" id="year1" disabled>
@@ -123,13 +121,13 @@
                             <div class="col">
                                 <label for="rushingYards"><strong>Rushing Yards: </strong></label>
                                 <input type="number" class="form-control" id="rushingYards" name="rushingYards"
-                                       min="-500" max="50000">
+                                       min="-500" max="4000" required>
                                 <label for="rushingTDs"><strong>Rushing Touchdowns: </strong></label>
                                 <input type="number" class="form-control" id="rushingTDs" name="rushingTDs" min="0"
-                                       max="50000">
+                                       max="4000" required>
                                 <label for="fumbles"><strong>Fumbles: </strong></label>
                                 <input type="number" class="form-control" id="fumbles" name="fumbles" min="0"
-                                       max="50000">
+                                       max="100" required>
                             </div>
                         </div>
                     </div>

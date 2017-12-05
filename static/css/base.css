@@ -31,3 +31,11 @@ footer {
 #cancel {
     color: white;
 }
+
+.margin-top-20 {
+    margin-top: 20px;
+}
+
+.lastButton {
+    margin-bottom: 20px;
+}

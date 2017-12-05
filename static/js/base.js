@@ -1,4 +1,32 @@
 $(document).ready(function () {
+    $('#MostTDs').DataTable({'order':[[1, 'desc']], 'bLengthChange':false});
+    $('#sacksAndReceivingTDs').DataTable({'order':[[1, 'desc']], 'bLengthChange':false});
+    $('#longerThanZuerleinTable').DataTable({'order':[[1, 'desc']], 'bLengthChange':false});
+
+    val = $('#kickerSelect').val();
+    if (val === 'Greg Zuerlein'){
+        $('#longestFG').html('61');
+    }else if (val === 'Matt Prater'){
+        $('#longestFG').html('64');
+    }else if (val === 'Mason Crosby'){
+        $('#longestFG').html('58');
+    }else if (val === 'Dan Carpenter'){
+        $('#longestFG').html('60');
+    }
+
+    $('#kickerSelect').change(function(){
+        val = $(this).val();
+        if (val === 'Greg Zuerlein'){
+            $('#longestFG').html('61');
+        }else if (val === 'Matt Prater'){
+            $('#longestFG').html('64');
+        }else if (val === 'Mason Crosby'){
+            $('#longestFG').html('58');
+        }else if (val === 'Dan Carpenter'){
+            $('#longestFG').html('60');
+        }
+    });
+
     var table = $('#Player').DataTable();
     table.$('[data-toggle="popover"]').popover();
     //triggered when modal is about to be shown

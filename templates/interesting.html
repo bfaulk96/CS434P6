@@ -1,4 +1,190 @@
 {% extends "base.html" %}
 {% block body %}
-<h2>Interesting</h2>
+    <h2>Interesting</h2>
+    <div class="row">
+        <div class="col align-self-center">
+            <div class="card">
+                <div class="card-header"><h4>Players with most rushing <i>and</i> receiving touchdowns</h4></div>
+                <div class="card-body">
+                    <form action="/getMostTDs" method="post">
+                        <label for="q1num">Number of top results to view:</label>
+                        <input name="q1num" id="q1num" type="number" min="1" max="3000" required>
+                        <input type="submit" class="btn btn-sm btn-primary right" value="Search">
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% if data1 %}
+            <div class="col align-self-center text-center">
+                <table id="MostTDs" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Total</th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <th>Name</th>
+                        <th>Total</th>
+                    </tr>
+                    </tfoot>
+                    <tbody>
+                    {% for row in data1 %}
+                        <tr>
+                            {% for field in row %}
+                                <td>{{ field }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="col"></div>
+        {% endif %}
+    </div>
+    <div class="row margin-top-20">
+        <div class="col align-self-center">
+            <div class="card">
+                <div class="card-header"><h4>Players with both a receiving touchdown and a defensive sack</h4></div>
+                <div class="card-body">
+                    <form action="/defensiveSackReceivingTD" method="post">
+                        <label for="q2num">Number of top results to view:</label>
+                        <input name="q2num" id="q2num" type="number" min="1" max="1000" aria-describedby="nameHelp">
+                        <small id="nameHelp" class="form-text text-muted margin-15">Optional, Default No Limit</small>
+                        <br>
+                        <label for="q2num">Above this many sacks:</label>
+                        <input name="q2sacks" id="q2sacks" type="number" min="0" max="50" aria-describedby="nameHelp">
+                        <small id="nameHelp" class="form-text text-muted margin-15">Optional, Default 0</small>
+                        <input type="submit" class="btn btn-sm btn-primary right" value="Search">
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% if data2 %}
+            <div class="col align-self-center text-center">
+                <table id="sacksAndReceivingTDs" class="table table-striped table-bordered table-hover" cellspacing="0"
+                       width="100%">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Sacks</th>
+                        <th>Receiving Touchdowns</th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <th>Name</th>
+                        <th>Sacks</th>
+                        <th>Receiving Touchdowns</th>
+                    </tr>
+                    </tfoot>
+                    <tbody>
+                    {% for row in data2 %}
+                        <tr>
+                            {% for field in row %}
+                                <td>{{ field }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+        {% if not data1 and not data2 and not data3 %}
+            <div class="col align-self-center">
+                {% with errors = get_flashed_messages(category_filter=["error"]) %}
+                    {% if errors %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <h4 class="alert-heading">
+                                Error(s) occurred!
+                            </h4>
+                            <div>
+                                {% for msg in errors %}
+                                    {% for key in msg %}
+                                        {{ key }}:
+                                        <ul>
+                                            {% for val in msg[key] %}
+                                                <li>{{ val }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                        <hr>
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        {% else %}
+            <div class="col"></div>
+        {% endif %}
+    </div>
+    <div class="row margin-top-20">
+        <div class="col align-self-center">
+            <div class="card">
+                <form action="/longerThanZuerlein" method="post">
+                    <div class="card-header">
+                        <h4>Players with a field goal longer than
+                            <select name="kickerSelect" id="kickerSelect">
+                                <option value="Greg Zuerlein" {% if name=='Greg Zuerlein' %} selected="selected"{% endif %}>
+                                    Greg Zuerlein
+                                </option>
+                                <option value="Dan Carpenter" {% if name=='Dan Carpenter' %} selected="selected"{% endif %}>
+                                    Dan Carpenter
+                                </option>
+                                <option value="Matt Prater" {% if name=='Matt Prater' %} selected="selected"{% endif %}>
+                                    Matt Prater
+                                </option>
+                                <option value="Mason Crosby" {% if name=='Mason Crosby' %} selected="selected"{% endif %}>
+                                    Mason Crosby
+                                </option>
+                            </select>'s longest FG (<span id="longestFG">61</span>)
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <label for="q3num">Number of top results to view:</label>
+                        <input name="q3num" id="q3num" type="number" min="1" max="1000" aria-describedby="nameHelp">
+                        <small id="nameHelp" class="form-text text-muted margin-15">Optional, Default No Limit</small>
+                        <input type="submit" class="btn btn-sm btn-primary right lastButton" value="Search">
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% if data3 or emptySet %}
+            <div class="col align-self-center text-center">
+                <table id="longerThanZuerleinTable" class="table table-striped table-bordered table-hover"
+                       cellspacing="0"
+                       width="100%">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Longest Field Goal</th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <th>Name</th>
+                        <th>Longest Field Goal</th>
+                    </tr>
+                    </tfoot>
+                    <tbody>
+                    {% for row in data3 %}
+                        <tr>
+                            {% for field in row %}
+                                <td>{{ field }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="col"></div>
+        {% endif %}
+    </div>
 {% endblock %}

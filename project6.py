@@ -81,7 +81,6 @@ def insert_player():
         name = request.form['name']
         day = request.form['day']
         month = request.form['month']
-        team = request.form['team']
         year = request.form['year']
         status = request.form['status']
         dob = year + '-' + month + '-' + day
@@ -90,7 +89,7 @@ def insert_player():
         try:
             result = cursor.execute(
                 "INSERT INTO Player(name, DOB, currentStatus, ID) "
-                "VALUES ('{}','{}','{}','{}')".format(name, dob, status, playerID))
+                "VALUES (\"{}\",\"{}\",\"{}\",\"{}\")".format(name, dob, status, playerID))
             conn.commit()
             flash('Player was successfully added to the database. {} row affected.'.format(result), 'success')
             return redirect(url_for('index'))
@@ -147,7 +146,7 @@ def delete_player():
         cursor.execute("DELETE FROM Stats WHERE playerID LIKE \"{}\"".format(id))
         cursor.execute("DELETE FROM Player WHERE ID LIKE \"{}\"".format(id))
         conn.commit()
-        flash('Player was successfully deleted. 7 tables affected.', 'success')
+        flash('Player was successfully deleted.', 'success')
         return redirect(url_for('delete'))
     except Exception as e:
         msg = {'Player was not successfully deleted. The following exception occurred': [str(e)]}
@@ -155,6 +154,120 @@ def delete_player():
         flash(msg,
               'error')
         return redirect(url_for('delete'))
+
+
+@app.route('/getMostTDs', methods=['GET', 'POST'])
+def getMostRecTDsRushTDs():
+    form = request.form
+    if form:
+        numFirstQuery = form['q1num']
+        try:
+            result = cursor.execute("SELECT DISTINCT(P.name), SUM(rushingTDs) + SUM(receivingTDs) as Total "
+                                    "FROM Player P, Rushing, Receiving "
+                                    "WHERE P.ID = Rushing.playerID "
+                                    "AND P.ID = Receiving.playerID "
+                                    "GROUP BY P.ID "
+                                    "ORDER BY Total desc "
+                                    "LIMIT {};".format(numFirstQuery))
+            data = cursor.fetchall()
+            rows = []
+            cols = []
+
+            for row in data:
+                for col in row:
+                    cols.append(col)
+                rows.append(cols)
+                cols = []
+            print(rows)
+            return render_template('interesting.html', activePage='interesting', data1=rows)
+        except Exception as e:
+            msg = {'There was an error finding results': [str(e)]}
+            print(msg)
+            flash(msg,
+                  'error')
+    return redirect(url_for('interesting'))
+
+
+@app.route('/defensiveSackReceivingTD', methods=['GET', 'POST'])
+def getDefensiveSacksReceivingTD():
+    form = request.form
+    if form:
+        num2Query = form['q2num']
+        q2sacks = form['q2sacks']
+        if not q2sacks:
+            q2sacks = 0
+        if not num2Query:
+            num2Query = 10000
+        try:
+            result = cursor.execute("SELECT P.name, s1.sum1, s2.sum2 "
+                                    "FROM Player P, (SELECT SUM(sacks) as sum1, playerID FROM Defensive GROUP BY playerID) s1, "
+                                    "(SELECT SUM(receivingTDs) as sum2, playerID FROM Receiving GROUP BY playerID) s2 "
+                                    "WHERE P.ID = s2.playerID AND P.ID = s1.playerID "
+                                    "AND s1.sum1 > {} AND s2.sum2 > 0 "
+                                    "LIMIT {};".format(q2sacks, num2Query))
+            data = cursor.fetchall()
+            rows = []
+            cols = []
+
+            for row in data:
+                for col in row:
+                    cols.append(col)
+                rows.append(cols)
+                cols = []
+            print(rows)
+            if not rows:
+                flash({"Error": ["No results found"]}, 'error')
+                return redirect(url_for('interesting'))
+            else:
+                return render_template('interesting.html', activePage='interesting', data2=rows)
+        except Exception as e:
+            msg = {'There was an error finding results': [str(e)]}
+            print(msg)
+            flash(msg,
+                  'error')
+    return redirect(url_for('interesting'))
+
+
+@app.route('/longerThanZuerlein', methods=['GET', 'POST'])
+def getLongerThanZuerlein():
+    form = request.form
+    if form:
+        num2Query = form['q3num']
+        kickerSelect = form['kickerSelect']
+        if not num2Query:
+            num2Query = 10000
+        try:
+            result = cursor.execute("SELECT DISTINCT(P.name), MAX(F.longestFG) "
+                                    "FROM Player P, FieldGoalKicking F "
+                                    "WHERE P.ID = F.playerID "
+                                    "AND F.longestFG > "
+                                        "(SELECT MAX(longestFG) "
+                                        "FROM Player p2, FieldGoalKicking f2 "
+                                        "WHERE p2.ID = f2.playerID "
+                                        "AND p2.name LIKE '{}') "
+                                    "GROUP BY F.playerID "
+                                    "LIMIT {};".format(kickerSelect, num2Query))
+            data = cursor.fetchall()
+            rows = []
+            cols = []
+
+            for row in data:
+                for col in row:
+                    cols.append(col)
+                rows.append(cols)
+                cols = []
+            print(rows)
+            if not rows:
+                emptySet=True
+            else:
+                emptySet=False
+            return render_template('interesting.html', activePage='interesting', data3=rows, emptySet=emptySet, name=kickerSelect)
+        except Exception as e:
+            msg = {'There was an error finding results': [str(e)]}
+            print(msg)
+            flash(msg,
+                  'error')
+    return redirect(url_for('interesting'))
 
 
 class PlayerForm(Form):

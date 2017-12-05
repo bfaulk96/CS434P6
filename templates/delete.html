@@ -37,19 +37,19 @@
                                 <a tabindex="0" class="btn btn-danger" role="button" data-toggle="popover"
                                    data-trigger="focus" data-placement="top"
                                     data-html="true"  title="<div class='text-center'>Are you sure you would like to delete this player?</div>"
-                                   data-content="<div class='text-center'>
-                                   <div class='row'>
-                                   <div class='col'>
-                                   <form id='deletePlayerForm' action='/delete_player' method='post'>
-                                   <input type='hidden' id='id' name='id' value='{{ row[0] }}'>
-                                   <input type='submit' class='btn btn-danger w-100' value='Delete'>
+                                   data-content='<div class="text-center">
+                                   <div class="row">
+                                   <div class="col">
+                                   <form id="deletePlayerForm" action="/delete_player" method="post">
+                                   <input type="hidden" id="id" name="id" value="{{ row[0].replace("'", "\'") }}">
+                                   <input type="submit" class="btn btn-danger w-100" value="Delete">
                                    </form>
                                    </div>
-                                   <div class='col'>
-                                   <a data-toggle='popover' class='btn btn-secondary w-100' role='button' id='cancel'>Cancel</a>
+                                   <div class="col">
+                                   <a data-toggle="popover" class="btn btn-secondary w-100" role="button" id="cancel">Cancel</a>
                                    </div>
                                    </div>
-                                   </div>">Delete</a>
+                                   </div>'>Delete</a>
 {#                                <input type='submit' class="btn btn-danger" value='Delete'>#}
 {#                            </form>#}
                         </td>
