@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col align-self-center">
             <div class="card">
-                <div class="card-header"><h4>Players with most rushing <i>and</i> receiving touchdowns</h4></div>
+                <div class="card-header"><h4>Players with most rushing and receiving touchdowns</h4></div>
                 <div class="card-body">
                     <form action="/getMostTDs" method="post">
                         <label for="q1num">Number of top results to view:</label>
@@ -120,8 +120,6 @@
                     {% endif %}
                 {% endwith %}
             </div>
-        {% else %}
-            <div class="col"></div>
         {% endif %}
     </div>
     <div class="row margin-top-20">

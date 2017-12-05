@@ -162,11 +162,10 @@ def getMostRecTDsRushTDs():
     if form:
         numFirstQuery = form['q1num']
         try:
-            result = cursor.execute("SELECT DISTINCT(P.name), SUM(rushingTDs) + SUM(receivingTDs) as Total "
-                                    "FROM Player P, Rushing, Receiving "
-                                    "WHERE P.ID = Rushing.playerID "
-                                    "AND P.ID = Receiving.playerID "
-                                    "GROUP BY P.ID "
+            result = cursor.execute("SELECT P.name, s1.sum1 + s2.sum2 as Total "
+                                    "FROM Player P, (SELECT SUM(rushingTDs) as sum1, playerID FROM Rushing GROUP BY playerID) s1, "
+                                    "(SELECT SUM(receivingTDs) as sum2, playerID FROM Receiving GROUP BY playerID) s2 "
+                                    "WHERE P.ID = s2.playerID AND P.ID = s1.playerID "
                                     "ORDER BY Total desc "
                                     "LIMIT {};".format(numFirstQuery))
             data = cursor.fetchall()
